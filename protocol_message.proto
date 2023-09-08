@@ -1,0 +1,140 @@
+
+syntax = "proto3";
+package asf.msgbus.blackbox2.protocol;
+
+//import "google/protobuf/timestamp.proto";
+
+message Boolean {
+    bool value = 1;
+}
+
+message String {
+    string value = 1;
+}
+
+message Instance {
+    uint64 id = 1;
+}
+
+message Result {
+    uint32 code = 1;
+}
+
+message Version {
+    uint32 major_number = 1;
+    uint32 minor_number = 2;
+    uint32 patch_number = 3;
+}
+
+enum Direction {
+    In = 0;
+    Out = 1;
+    Both = 2;
+}
+
+message Thread {
+    uint64 id = 1;
+    string name = 2;
+}
+
+message Process {
+    Version version = 1;
+    uint32 pid = 2;
+    string name = 3;
+    string cmdline = 4;
+    string workding_directory = 5;
+    string environments = 6;
+    string config_filename = 7;
+    uint64 startup_timestamp = 8;
+}
+
+message Channel {
+    Instance owner_process = 1;
+    Thread owner_thread = 2;
+    string id = 3;
+    string type = 4;
+    Direction dir = 5;
+    map<string, string> config = 6;
+}
+
+message Executor {
+    Instance owner_process = 1;
+    Thread owner_thread = 2;
+    uint32 create_thread_id = 3;
+    uint32 thread_pool_size = 4;
+    bool is_runnning = 5;
+    repeated string attached_nodes = 6;
+}
+
+message ExecutorTask {
+    Thread thread = 1;
+    uint32 task_id = 2;
+}
+
+message Node {
+    Instance owner_process = 1;
+    Thread owner_thread = 2;
+    string name = 3;
+    bool is_attached = 4;
+}
+
+enum HandleType {
+    Reader = 0;
+    Writer = 1;
+    Client = 2;
+    Server = 3;
+    Unknown = 4;
+};
+
+message KeyStat {
+    bool valid = 1;
+    uint64 rx_subscriber = 2;
+    uint64 rx_unsubscriber = 3;
+    uint64 rx_packets = 4;
+    uint64 rx_bytes = 5;
+    uint64 rx_multicast = 6;
+    uint64 rx_length_errors = 7;
+    uint64 rx_no_buffer = 8;
+    uint64 rx_no_reader = 9;
+    uint64 tx_subscriber = 10;
+    uint64 tx_unsubscriber = 11;
+    uint64 tx_packets = 12;
+    uint64 tx_bytes = 13;
+    uint64 tx_multicast = 14;
+    uint64 tx_no_transmit = 15;
+    uint64 tx_length_errors = 16;
+    uint64 tx_no_channel = 17;
+    uint64 tx_no_subscriber = 18;
+    uint64 tx_no_endpoint = 19;
+    uint64 tx_no_buffer = 20;
+}
+
+message Handle {
+    Instance owner_node = 1;
+    Thread owner_thread = 2;
+    HandleType type = 3;
+    string key = 4;
+    bool is_enabled = 5;
+    map<string, string> mapping_channels = 6;
+}
+
+message AttachResponse {
+    Instance instance = 1;
+    bool is_activated = 2;
+}
+
+message Message {
+    Direction dir = 1;
+    optional bytes payload = 2;
+    optional bool is_pod = 3;
+    optional string serialize_type = 4;
+    optional uint64 gen_timestamp = 5;
+    optional uint64 tx_timestamp = 6;
+    optional uint64 rx_timestamp = 7;
+    optional uint64 write_timestamp = 8;
+    optional uint64 read_timestamp = 9;
+}
+
+message MessageFields {
+    uint32 has_flags = 1;
+}
